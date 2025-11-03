@@ -42,9 +42,10 @@
     @keyframes grain{0%{transform:translate(0,0)} 10%{transform:translate(-5%, -10%)} 20%{transform:translate(-15%, 5%)} 30%{transform:translate(7%, -25%)} 40%{transform:translate(-5%, 25%)} 50%{transform:translate(-15%, 10%)} 60%{transform:translate(15%, 0)} 70%{transform:translate(0,15%)} 80%{transform:translate(3%, 3%)} 90%{transform:translate(-10%, 10%)} 100%{transform:translate(0,0)}}
 
     header{
-      width:100%; position:sticky; top:0; backdrop-filter:saturate(160%) blur(12px); background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55)); box-shadow:0 8px 24px rgba(255,111,164,.08);
+      width:100%; position:sticky; top:0; z-index:100; backdrop-filter:saturate(160%) blur(12px); background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55)); box-shadow:0 8px 24px rgba(255,111,164,.08); transition:transform .3s ease;
     }
-    .container{max-width:1100px; margin:0 auto; padding:0 20px}
+    header.hide-header{transform:translateY(-100%)}
+    .container{max-width:1100px; margin:0 auto; padding:0 24px}
     .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0}
     .brand{display:flex; gap:12px; align-items:center; text-decoration:none; color:var(--ink)}
     .logo{width:38px; height:38px; display:block; filter:drop-shadow(0 4px 12px rgba(255,111,164,.3))}
@@ -232,11 +233,16 @@
       .features{grid-template-columns:1fr}
       h1{font-size:32px}
       .section h2{font-size:28px}
+      .container{padding:0 20px}
     }
     @media (max-width: 640px){
       .cards, .features{grid-template-columns:1fr}
       .cta-panel .row{flex-direction:column; align-items:flex-start}
       .newsletter{width:100%; flex-direction:column}
+      .container{padding:0 16px}
+      .nav a.cta{padding:10px 14px; font-size:14px}
+      .brand b{font-size:16px}
+      .logo{width:34px; height:34px}
       .newsletter input, .newsletter button{width:100%; flex:1}
     }
 
@@ -320,7 +326,7 @@
           <!-- Status Bar (Fixed across all screens) -->
           <div class="app-content" style="position:absolute; inset:0; display:flex; flex-direction:column; color:#fff">
             <div class="status-bar" style="display:flex; align-items:center; justify-content:space-between; padding:16px 16px 4px; z-index:5">
-              <span>9:41</span>
+              <span id="phone-time">9:41</span>
               <div style="display:flex; gap:4px; align-items:center">
                 <span>●●●●</span>
                 <span>100%</span>
@@ -763,6 +769,34 @@
 
     // 5) Footer year
     document.getElementById('yr').textContent = new Date().getFullYear()
+
+    // 5b) Hide header on scroll down, show on scroll up
+    let lastScrollY = window.scrollY
+    const header = document.querySelector('header')
+    
+    window.addEventListener('scroll', ()=>{
+      const currentScrollY = window.scrollY
+      
+      if(currentScrollY > lastScrollY && currentScrollY > 100){
+        // Scrolling down
+        header.classList.add('hide-header')
+      } else {
+        // Scrolling up
+        header.classList.remove('hide-header')
+      }
+      
+      lastScrollY = currentScrollY
+    }, {passive:true})
+
+    // 5c) Update phone time to show real local time
+    function updatePhoneTime(){
+      const now = new Date()
+      const hours = now.getHours()
+      const minutes = now.getMinutes().toString().padStart(2, '0')
+      document.getElementById('phone-time').textContent = `${hours}:${minutes}`
+    }
+    updatePhoneTime() // Set initial time
+    setInterval(updatePhoneTime, 60000) // Update every minute
 
     // 6) Tab switching for phone mockup with auto-cycling
     const tabItems = document.querySelectorAll('.tab-item')
