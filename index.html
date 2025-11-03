@@ -270,28 +270,10 @@
               <stop offset="0%" style="stop-color:#ff9bc2;stop-opacity:1" />
               <stop offset="100%" style="stop-color:#ff6fa4;stop-opacity:1" />
             </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
           </defs>
-          <!-- Main sparkle/glow shape -->
-          <circle cx="24" cy="24" r="20" fill="url(#logoGrad)" filter="url(#glow)"/>
-          <!-- Sparkle stars -->
-          <g fill="white" opacity="0.9">
-            <path d="M24 10 L25 14 L29 14 L26 17 L27 21 L24 19 L21 21 L22 17 L19 14 L23 14 Z"/>
-            <circle cx="16" cy="18" r="1.5"/>
-            <circle cx="32" cy="18" r="1.5"/>
-            <circle cx="18" cy="30" r="1.2"/>
-            <circle cx="30" cy="30" r="1.2"/>
-          </g>
-          <!-- Shine highlight -->
-          <ellipse cx="20" cy="18" rx="6" ry="8" fill="white" opacity="0.25"/>
+          <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#logoGrad)"/>
+          <text x="24" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="white" text-anchor="middle">Glowly</text>
         </svg>
-        <b>Glowly</b>
       </a>
       <nav class="links" aria-label="primary">
         <a class="cta" href="#join">Get Early Access</a>
@@ -315,7 +297,17 @@
           <div class="card"><div class="emoji">📦</div><h3>Product Scanner</h3><p>Scan any product to see if it matches your skin type and routine goals.</p></div>
         </div>
         <div style="text-align:center; margin-top:20px; font-size:14px; color:#7A2048; font-weight:600">
-          <span style="background:linear-gradient(135deg,rgba(255,111,164,.1),rgba(255,180,154,.08)); padding:8px 16px; border-radius:999px; border:1px solid rgba(255,111,164,.2)">
+          <span style="background:linear-gradient(135deg,rgba(255,111,164,.1),rgba(255,180,154,.08)); padding:8px 16px; border-radius:999px; border:1px solid rgba(255,111,164,.2); display:inline-flex; align-items:center; gap:8px">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="width:20px; height:20px; display:block">
+              <defs>
+                <linearGradient id="logoGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#ff9bc2;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#ff6fa4;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="2" y="2" width="44" height="44" rx="10" fill="url(#logoGrad4)"/>
+              <text x="24" y="28" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="white" text-anchor="middle">Glowly</text>
+            </svg>
             👉 Try the interactive demo — tap the phone! 
           </span>
         </div>
@@ -337,9 +329,17 @@
             <!-- Header with Mode Toggle (Fixed across all screens) -->
             <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 16px; z-index:5">
               <div style="display:flex; align-items:center; gap:10px">
-                <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,#ff9bc2,#ff6fa4); box-shadow:0 4px 12px rgba(255,111,164,.4)"></div>
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="width:32px; height:32px; display:block">
+                  <defs>
+                    <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#ff9bc2;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#ff6fa4;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="2" y="2" width="44" height="44" rx="10" fill="url(#logoGrad2)"/>
+                  <text x="24" y="29" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="white" text-anchor="middle">Glowly</text>
+                </svg>
                 <div>
-                  <div class="app-title" style="font-weight:800; font-size:18px">Glowly</div>
                   <div class="page-subtitle" style="font-size:11px">Your skincare companion</div>
                 </div>
               </div>
@@ -625,8 +625,16 @@
     <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:28px; padding:24px 0">
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
-          <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,#ff9bc2,#ff6fa4); box-shadow:0 6px 16px rgba(255,111,164,.3)"></div>
-          <b style="font-family:Manrope,Inter; font-weight:800; font-size:18px">Glowly</b>
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="width:32px; height:32px; display:block">
+            <defs>
+              <linearGradient id="logoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ff9bc2;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#ff6fa4;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="44" height="44" rx="10" fill="url(#logoGrad3)"/>
+            <text x="24" y="29" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="white" text-anchor="middle">Glowly</text>
+          </svg>
         </div>
         <p style="max-width:32ch; margin:0; font-size:14px; color:#6a626f">Your warm AI skincare companion. Building routines that feel good, one day at a time.</p>
       </div>
