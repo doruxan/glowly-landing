@@ -587,10 +587,12 @@
             <p style="margin:0"><strong>Join the early access list.</strong> Be among the first to build routines you'll love, track progress that feels good, and experience skincare support that truly cares. No spam, just updates that matter.</p>
           </div>
           <form class="newsletter" id="newsletter" aria-label="Join the Glowly waitlist" action="https://docs.google.com/forms/d/e/1FAIpQLSdzJdvOsm2WdVo0u4Xwx49kfBFkiAnNIobyiyRcov15xOIoTw/formResponse" target="hidden_iframe" method="POST">
-            <input type="email" id="email" name="entry.1246109788" placeholder="your@email.com" aria-label="Email address" required>
+            <input type="email" id="email" name="entry.1246109788" placeholder="your@email.com" aria-label="Email address" required autocomplete="email">
+            <input type="hidden" name="fvv" value="1">
+            <input type="hidden" name="fbzx" value="4432854419493781860">
             <button type="submit" id="submit-btn">Get early access ✨</button>
           </form>
-          <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){onFormSubmit()}"></iframe>
+          <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
         </div>
       </div>
     </section>
@@ -679,7 +681,6 @@
     document.querySelectorAll('.card, .feature').forEach(el=>observer.observe(el))
 
     // 3) Newsletter submit to Google Forms with confetti
-    let submitted = false
     const form = document.getElementById('newsletter')
     const emailInput = document.getElementById('email')
     const submitBtn = document.getElementById('submit-btn')
@@ -693,20 +694,16 @@
         return 
       }
       
-      // Set submitted flag for iframe onload
-      submitted = true
+      // Disable button and show loading
       submitBtn.disabled = true
       submitBtn.textContent = 'Submitting...'
-    })
-    
-    // Called when iframe loads (form submitted successfully)
-    window.onFormSubmit = function() {
-      // Tiny confetti celebration
-      confetti()
       
-      form.innerHTML = '<div role="status" aria-live="polite" style="font-weight:800; text-align:center; padding:20px; background:rgba(255,255,255,.95); border-radius:14px; animation:slideIn .4s cubic-bezier(.2,.7,.2,1)"><div style="font-size:48px; margin-bottom:8px">✨</div><div style="font-size:18px; margin-bottom:6px">You\'re on the list!</div><div style="font-size:14px; opacity:.8; font-weight:500">We\'ll reach out when it\'s time to glow 💝</div></div>'
-      submitted = false
-    }
+      // Show success after brief delay (form submits in background)
+      setTimeout(()=>{
+        confetti()
+        form.innerHTML = '<div role="status" aria-live="polite" style="font-weight:800; text-align:center; padding:20px; background:rgba(255,255,255,.95); border-radius:14px; animation:slideIn .4s cubic-bezier(.2,.7,.2,1); color:#1a1322"><div style="font-size:48px; margin-bottom:8px">✨</div><div style="font-size:18px; margin-bottom:6px">You\'re on the list!</div><div style="font-size:14px; opacity:.8; font-weight:500">We\'ll reach out when it\'s time to glow 💝</div></div>'
+      }, 1000)
+    })
 
     // 4) Button shortcut
     document.getElementById('btn-join').addEventListener('click',()=>{
