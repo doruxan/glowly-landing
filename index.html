@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glowly — Your warm AI skincare companion</title>
+  <meta name="description" content="Build skincare routines you'll love with gentle progress tracking, warm reminders, and celebrating every small win. Your AI skincare companion is here." />
+  <meta property="og:title" content="Glowly — Your warm AI skincare companion" />
+  <meta property="og:description" content="Track your skincare journey with kindness. Streaks that motivate, not pressure. Progress that celebrates you." />
+  <meta property="og:image" content="https://glowly.app/og-image.png" />
+  <meta name="theme-color" content="#FF6FA4" />
+  
+  <!-- Fonts (feel free to remove if you want zero externals) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root{
+      --pink-50:#FFF1F6; --pink-100:#FFE2ED; --pink-200:#FFC9DD; --pink-300:#FFADCD; --pink-400:#FF90BE; --pink-500:#FF6FA4; --pink-600:#F25598; --pink-700:#DB3E83; --pink-800:#B8306C; --pink-900:#7A2048;
+      --peach:#FFB49A;
+      --cream:#FFF7F9;
+      --ink:#1A1322;
+      --muted:#6C6573;
+      --card:#FFFFFFCC;
+      --shadow:0 10px 30px rgba(255,111,164,.25), 0 4px 12px rgba(0,0,0,.06);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink); background: radial-gradient(1200px 800px at 10% -10%, #ffd9e8 0%, rgba(255,217,232,0) 60%), radial-gradient(1200px 800px at 110% 10%, #ffe6d9 0%, rgba(255,230,217,0) 55%), linear-gradient(180deg, #fff 0%, #fff6f9 35%, #fff 100%);
+      overflow-x:hidden;
+    }
+    /* Animated gradient glow canvas behind everything */
+    .bg-wrap{position:fixed; inset:0; z-index:-2; overflow:hidden}
+    canvas#glow{position:absolute; inset:0; width:100%; height:100%;}
+    .grain{position:fixed; inset:-200%; z-index:-1; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22 viewBox=%220 0 400 400%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22400%22 height=%22400%22 filter=%22url(%23n)%22 opacity=%220.04%22/></svg>'); animation:grain 14s steps(8) infinite; pointer-events:none}
+    @keyframes grain{0%{transform:translate(0,0)} 10%{transform:translate(-5%, -10%)} 20%{transform:translate(-15%, 5%)} 30%{transform:translate(7%, -25%)} 40%{transform:translate(-5%, 25%)} 50%{transform:translate(-15%, 10%)} 60%{transform:translate(15%, 0)} 70%{transform:translate(0,15%)} 80%{transform:translate(3%, 3%)} 90%{transform:translate(-10%, 10%)} 100%{transform:translate(0,0)}}
+
+    header{
+      width:100%; position:sticky; top:0; backdrop-filter:saturate(160%) blur(12px); background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55)); box-shadow:0 8px 24px rgba(255,111,164,.08);
+    }
+    .container{max-width:1100px; margin:0 auto; padding:0 20px}
+    .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0}
+    .brand{display:flex; gap:12px; align-items:center; text-decoration:none; color:var(--ink)}
+    .logo{width:38px; height:38px; border-radius:12px; background:radial-gradient(120% 120% at 20% 20%, var(--pink-400) 0%, var(--pink-600) 60%, #a52b6f 100%); box-shadow:0 10px 18px rgba(219,62,131,.35) inset, 0 8px 22px rgba(219,62,131,.25); position:relative}
+    .logo:after{content:""; position:absolute; inset:0; background:radial-gradient(60px 60px at 30% 30%, #fff8 0%, transparent 40%); border-radius:12px}
+    .brand b{font-family:Manrope,Inter; font-weight:800; letter-spacing:.3px; font-size:18px}
+    .nav a.cta{padding:10px 16px; border-radius:14px; text-decoration:none; font-weight:600; color:white; background:linear-gradient(135deg, var(--pink-500), var(--peach)); box-shadow:var(--shadow); transform:translateZ(0); transition:transform .15s ease, box-shadow .2s ease}
+    .nav a.cta:hover{transform:translateY(-1px) scale(1.02); box-shadow:0 14px 30px rgba(255,111,164,.35)}
+
+    .hero{display:grid; grid-template-columns:1.15fr .85fr; gap:36px; padding:72px 0 40px}
+    .pill{display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#7A2048; background:linear-gradient(180deg, #fff, #fff7fb); border:1px solid #ffd6e9; border-radius:999px; padding:8px 12px; box-shadow:0 6px 14px rgba(255,111,164,.2)}
+    h1{font-family:Manrope,Inter; font-weight:800; font-size: clamp(34px, 4.5vw, 58px); line-height:1.05; margin:16px 0; letter-spacing:-.02em}
+    .sub{font-size: clamp(16px, 1.6vw, 20px); color:#584d5e; max-width:58ch}
+    .cta-row{display:flex; gap:14px; margin-top:24px; flex-wrap:wrap}
+    .btn{appearance:none; border:0; border-radius:18px; padding:14px 18px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transform:translateZ(0); transition:transform .15s ease, box-shadow .2s ease; background:linear-gradient(135deg, var(--pink-500), var(--peach)); color:white}
+    .btn.secondary{background:transparent; color:var(--ink); border:2px solid #ffd1e5}
+    .btn:hover{transform:translateY(-2px)}
+
+    .phone{
+      position:relative; width:min(340px, 90%); aspect-ratio:9/19.5; justify-self:center; align-self:center;
+      border-radius:42px; padding:12px; background:linear-gradient(160deg,#2c2c2e,#1c1c1e); box-shadow:0 50px 100px rgba(0,0,0,.35), 0 20px 40px rgba(0,0,0,.25), inset 0 1px 2px rgba(255,255,255,.1);
+    }
+    .screen{position:relative; width:100%; height:100%; border-radius:32px; background:linear-gradient(180deg,#1a1a2e,#16213e); overflow:hidden; border:1px solid rgba(255,111,164,.2); transition:all .4s cubic-bezier(.2,.7,.2,1); box-shadow:inset 0 0 40px rgba(255,111,164,.08)}
+    .screen.light-mode{background:linear-gradient(180deg,#fafafa,#ffffff); box-shadow:inset 0 0 60px rgba(0,0,0,.02)}
+    .screen .app-content{position:absolute; inset:0; padding:16px; display:flex; flex-direction:column; gap:10px; color:#fff}
+    .screen.light-mode .app-content{color:#1a1a1c}
+    .screen .status-bar{font-size:11px; opacity:.7}
+    .screen.light-mode .status-bar{opacity:.8; color:#666}
+    .screen .subtitle{opacity:.6}
+    .screen.light-mode .subtitle{opacity:1; color:#666}
+    .screen .page-title{font-size:20px; font-weight:800; margin:0 0 4px}
+    .screen.light-mode .page-title{color:#1a1a1c}
+    .screen .page-subtitle{font-size:12px; margin:0}
+    .screen.light-mode .page-subtitle{color:#666}
+    .screen .card-title{font-weight:800; font-size:16px}
+    .screen.light-mode .card-title{color:#1a1a1c}
+    .screen .metric-label{font-size:11px; font-weight:700}
+    .screen.light-mode .metric-label{color:#1a1a1c}
+    .screen .section-label{font-size:13px; font-weight:800}
+    .screen.light-mode .section-label{color:#1a1a1c}
+    .screen .streak-label{opacity:.85}
+    .screen.light-mode .streak-label{opacity:1; color:#555}
+    .screen .glow-message{opacity:.85}
+    .screen.light-mode .glow-message{opacity:1; color:#1a1a1c}
+    .screen .app-title{color:#fff}
+    .screen.light-mode .app-title{color:#1a1a1c}
+    .screen .completed-text{color:inherit}
+    .screen.light-mode .completed-text{color:#1a1a1c}
+    .screen .checkmark{color:#fff}
+    .screen.light-mode .checkmark{color:#ff6fa4}
+    .screen .card-bg{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15)}
+    .screen.light-mode .card-bg{background:#fff; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 8px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.02)}
+    .screen .inactive-card{opacity:.6}
+    .screen.light-mode .inactive-card{opacity:1; background:#f7f7f7!important; border:1px solid rgba(0,0,0,.04)!important}
+    .screen .empty-day{background:rgba(255,255,255,.1); border:1px dashed rgba(255,255,255,.2)}
+    .screen.light-mode .empty-day{background:#f9f9f9; border:1px solid rgba(0,0,0,.06)}
+    .screen .day-label{font-size:9px; opacity:.6}
+    .screen.light-mode .day-label{opacity:.5; color:#8a8a8a}
+    .screen .streak-card{background:linear-gradient(135deg,rgba(255,111,164,.18),rgba(255,180,154,.12)); border:1.5px solid rgba(255,111,164,.35)}
+    .screen.light-mode .streak-card{background:linear-gradient(135deg,#fff,#fff); border:1px solid rgba(0,0,0,.08); box-shadow:0 4px 12px rgba(255,111,164,.15), 0 2px 4px rgba(0,0,0,.04)}
+    .screen .streak-card::before{content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,111,164,.08),rgba(255,180,154,.05)); border-radius:inherit; opacity:0; transition:opacity .3s}
+    .screen.light-mode .streak-card::before{opacity:1}
+    .screen .routine-active{background:rgba(255,111,164,.2); border:1px solid rgba(255,111,164,.35)}
+    .screen.light-mode .routine-active{background:linear-gradient(135deg,#ff6fa4,#ff90be); border:none; box-shadow:0 4px 12px rgba(255,111,164,.25); color:#fff!important}
+    .screen.light-mode .routine-active .subtitle{color:rgba(255,255,255,.85)!important; opacity:1!important}
+    .screen .completed-item{background:rgba(255,111,164,.18); border:1px solid rgba(255,111,164,.3)}
+    .screen.light-mode .completed-item{background:linear-gradient(135deg,rgba(255,111,164,.08),rgba(255,180,154,.08)); border:1px solid rgba(255,111,164,.15)}
+    .screen .scanner-frame{border:3px dashed rgba(255,111,164,.3); background:rgba(255,111,164,.05)}
+    .screen.light-mode .scanner-frame{border:3px dashed rgba(255,111,164,.25); background:rgba(255,111,164,.06)}
+    .screen .product-icon{background:rgba(255,111,164,.15)}
+    .screen.light-mode .product-icon{background:rgba(255,111,164,.12)}
+    .screen .product-icon-inactive{background:rgba(255,111,164,.08)}
+    .screen.light-mode .product-icon-inactive{background:rgba(0,0,0,.04)}
+    #mode-toggle{transition:all .15s ease}
+    
+    /* Tab Bar */
+    .tab-bar{position:absolute; bottom:0; left:0; right:0; height:70px; background:rgba(255,255,255,.05); backdrop-filter:blur(20px); border-top:1px solid rgba(255,255,255,.1); display:flex; padding:8px 12px 20px; z-index:10}
+    .screen.light-mode .tab-bar{background:rgba(255,255,255,.95); border-top:1px solid rgba(0,0,0,.06); box-shadow:0 -4px 12px rgba(0,0,0,.04)}
+    .tab-item{position:relative; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all .2s ease; border-radius:12px; padding:6px}
+    .tab-item:hover{background:rgba(255,255,255,.08)}
+    .screen.light-mode .tab-item:hover{background:rgba(0,0,0,.04)}
+    .tab-icon{font-size:22px; transition:transform .2s ease}
+    .tab-item:hover .tab-icon{transform:scale(1.1)}
+    .tab-label{font-size:10px; font-weight:600; opacity:.6; transition:opacity .2s; color:#fff}
+    .screen.light-mode .tab-label{color:#6b6b6b; opacity:1}
+    .tab-item.active .tab-label{opacity:1; color:#ff6fa4}
+    .screen.light-mode .tab-item.active .tab-label{color:#ff6fa4}
+    .tab-item.active .tab-icon{transform:scale(1.05)}
+    
+    /* Auto-click pulse effect */
+    @keyframes tabClickPulse{
+      0%{transform:scale(1); opacity:1}
+      50%{transform:scale(1.15); opacity:.8}
+      100%{transform:scale(1); opacity:1}
+    }
+    .tab-item.auto-clicking{animation:tabClickPulse .6s ease-in-out}
+    .tab-item.auto-clicking .tab-icon{transform:scale(1.2)!important}
+    
+    /* Pulse ring on active tab during auto-cycle */
+    @keyframes pulseRing{
+      0%{box-shadow:0 0 0 0 rgba(255,111,164,.7)}
+      50%{box-shadow:0 0 0 8px rgba(255,111,164,0)}
+      100%{box-shadow:0 0 0 0 rgba(255,111,164,0)}
+    }
+    .tab-item.active.auto-cycling::before{
+      content:''; position:absolute; inset:-4px; border-radius:14px; 
+      animation:pulseRing 1.5s ease-out infinite; pointer-events:none;
+    }
+    
+    /* Disable initial pulse when auto-cycling */
+    @keyframes tabPulse{0%,100%{opacity:1} 50%{opacity:.7}}
+    .phone.tapped .tab-item .tab-icon{animation:none!important}
+    
+    /* Screen Content Container */
+    .screen-content{position:absolute; top:110px; left:0; right:0; bottom:70px; padding:12px 16px 16px; display:flex; flex-direction:column; gap:10px; transition:opacity .3s ease, transform .3s ease; overflow-y:auto; overflow-x:hidden}
+    .screen-content.hidden{opacity:0; transform:translateX(20px); pointer-events:none}
+    /* Hide scrollbar but keep functionality */
+    .screen-content::-webkit-scrollbar{width:0px; background:transparent}
+    .screen-content{-ms-overflow-style:none; scrollbar-width:none}
+    
+    /* Tap hint animation */
+    @keyframes tapHint{0%,100%{transform:scale(1)} 50%{transform:scale(1.05)}}
+    .phone::after{content:'👆 Tap to explore'; position:absolute; bottom:-40px; left:50%; transform:translateX(-50%); font-size:14px; font-weight:700; color:var(--pink-600); animation:tapHint 2s ease-in-out infinite; white-space:nowrap; transition:opacity .3s}
+    .phone.tapped::after{opacity:0; pointer-events:none}
+    
+    .streak-badge{
+      display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:12px;
+      background:linear-gradient(135deg,rgba(255,111,164,.15),rgba(255,180,154,.15)); border:1.5px solid rgba(255,111,164,.3);
+      backdrop-filter:blur(10px); font-weight:700; font-size:14px;
+    }
+    .streak-flame{font-size:18px; animation:flicker 2s ease-in-out infinite}
+    @keyframes flicker{0%,100%{transform:scale(1)} 50%{transform:scale(1.1)}}
+    .orb{position:absolute; filter:blur(40px); opacity:.5; animation:float 13s ease-in-out infinite; pointer-events:none}
+    .orb.p1{width:200px; height:200px; left:-40px; top:20px; background:radial-gradient(circle at 50% 50%, rgba(255,111,164,.6), rgba(255,144,190,.3) 45%, transparent 70%)}
+    .orb.p2{width:240px; height:240px; right:-50px; bottom:80px; background:radial-gradient(circle at 50% 50%, rgba(255,180,154,.5), rgba(255,178,202,.25) 45%, transparent 70%); animation-duration:16s}
+    @keyframes float{0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-12px) scale(1.05)}}
+
+    .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin:38px 0 0}
+    .card{background:var(--card); border:1px solid #ffe2ee; padding:18px; border-radius:20px; box-shadow:var(--shadow); transform:translateY(10px) scale(.98); opacity:0; transition:transform .6s cubic-bezier(.2,.7,.2,1), opacity .6s}
+    .card.show{transform:translateY(0) scale(1); opacity:1}
+    .emoji{font-size:24px}
+    .card h3{margin:10px 0 6px; font-size:18px}
+    .card p{margin:0; color:#5d5466}
+
+    .section{padding:70px 0}
+    .section h2{font-family:Manrope,Inter; font-size: clamp(26px, 3vw, 36px); margin:0 0 8px}
+    .section p.lead{color:#5a4f61; max-width:70ch}
+
+    .features{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:28px}
+    .feature{background:#fff; border:1px solid #ffe2ee; border-radius:20px; padding:22px; box-shadow:var(--shadow); transform:translateY(14px); opacity:0; transition:all .7s cubic-bezier(.2,.7,.2,1)}
+    .feature.show{transform:translateY(0); opacity:1}
+    .feature:hover{transform:translateY(-2px); box-shadow:0 16px 36px rgba(255,111,164,.28), 0 6px 14px rgba(0,0,0,.08)}
+    .feature svg{width:28px; height:28px}
+    @keyframes slideIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+
+    .band{margin-top:50px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; color:#6a626f}
+    .chip{border:1px dashed #ffd2e8; padding:8px 12px; border-radius:999px; background:#fff; font-weight:600}
+
+    .testimonials{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px}
+    .quote{background:linear-gradient(180deg,#fff,#fff7fb); border:1px solid #ffd9ea; border-radius:24px; padding:22px; box-shadow:var(--shadow); transition:transform .2s ease, box-shadow .3s ease}
+    .quote:hover{transform:translateY(-4px); box-shadow:0 14px 34px rgba(255,111,164,.3), 0 6px 14px rgba(0,0,0,.08)}
+    blockquote{margin:0; font-size:15px; line-height:1.6; color:#3d3440}
+    .cite{margin-top:12px; font-weight:700; font-size:14px; color:#7a2048}
+
+    .cta-panel{margin-top:34px; background:linear-gradient(135deg, var(--pink-400), var(--pink-600)); color:white; border-radius:26px; padding:28px; box-shadow:0 28px 60px rgba(219,62,131,.35)}
+    .cta-panel .row{display:flex; gap:18px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .cta-panel .row p{max-width:70ch; margin:0; font-size:18px}
+
+    footer{padding:36px 0 60px; color:#6a626f}
+    .links{display:flex; gap:16px; flex-wrap:wrap}
+
+    /* Newsletter mini form */
+    .newsletter{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+    .newsletter input{flex:1 1 260px; padding:14px 16px; border-radius:14px; border:1.5px solid #ffd0e6; outline:none; font-size:16px}
+    .newsletter button{padding:14px 18px; border:none; border-radius:14px; background:#1a1322; color:#fff; font-weight:800; cursor:pointer}
+
+    /* Responsive */
+    @media (max-width: 990px){
+      .hero{grid-template-columns:1fr; padding:48px 0 10px}
+      .cards{grid-template-columns:1fr 1fr}
+      .features{grid-template-columns:1fr 1fr}
+      .testimonials{grid-template-columns:1fr}
+      .phone{width:min(300px, 80%)}
+    }
+    @media (max-width: 768px){
+      .features{grid-template-columns:1fr}
+      h1{font-size:32px}
+      .section h2{font-size:28px}
+    }
+    @media (max-width: 640px){
+      .cards, .features{grid-template-columns:1fr}
+      .cta-panel .row{flex-direction:column; align-items:flex-start}
+      .newsletter{width:100%; flex-direction:column}
+      .newsletter input, .newsletter button{width:100%; flex:1}
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .grain, .orb, .streak-flame{animation:none}
+      .card, .feature, .quote, .screen, #mode-toggle{transition:none}
+      html{scroll-behavior:auto}
+    }
+    
+    /* Accessibility improvements */
+    .btn:focus-visible, #mode-toggle:focus-visible, .newsletter button:focus-visible{
+      outline:3px solid var(--pink-500); outline-offset:2px;
+    }
+    .newsletter input:focus-visible{
+      outline:3px solid var(--pink-500); outline-offset:0; border-color:var(--pink-500);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-wrap" aria-hidden="true">
+    <canvas id="glow"></canvas>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#" aria-label="Glowly home">
+        <span class="logo"></span>
+        <b>Glowly</b>
+      </a>
+      <nav class="links" aria-label="primary">
+        <a class="cta" href="#join">Get Early Access</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="home">
+      <div>
+        <span class="pill">✨ Skincare tracking that feels like self-care</span>
+        <h1>Build routines you'll love with <span style="background:linear-gradient(90deg, var(--pink-600), var(--peach)); -webkit-background-clip:text; background-clip:text; color:transparent">streaks that inspire</span></h1>
+        <p class="sub">Your warm AI skincare companion. Track your glow-up journey with gentle progress tracking, personalized insights, and encouraging words that make every day feel like a win—even when you miss one.</p>
+        <div class="cta-row">
+          <button class="btn" id="btn-join">Get early access</button>
+          <a href="#learn" class="btn secondary">See how it works</a>
+        </div>
+        <div class="cards" id="illus">
+          <div class="card"><div class="emoji">🔥</div><h3>Streaks that motivate</h3><p>Track consistency without the pressure. Miss a day? We help you bounce back stronger.</p></div>
+          <div class="card"><div class="emoji">📊</div><h3>AI Skin Analysis</h3><p>Smart computer vision analyzes your skin and provides personalized recommendations.</p></div>
+          <div class="card"><div class="emoji">📦</div><h3>Product Scanner</h3><p>Scan any product to see if it matches your skin type and routine goals.</p></div>
+        </div>
+        <div style="text-align:center; margin-top:20px; font-size:14px; color:#7A2048; font-weight:600">
+          <span style="background:linear-gradient(135deg,rgba(255,111,164,.1),rgba(255,180,154,.08)); padding:8px 16px; border-radius:999px; border:1px solid rgba(255,111,164,.2)">
+            👉 Try the interactive demo — tap the phone! 
+          </span>
+        </div>
+      </div>
+      <div class="phone" aria-hidden="true">
+        <div class="screen" id="app-screen">
+          <div class="orb p1"></div>
+          <div class="orb p2"></div>
+          <!-- Status Bar (Fixed across all screens) -->
+          <div class="app-content" style="position:absolute; inset:0; display:flex; flex-direction:column; color:#fff">
+            <div class="status-bar" style="display:flex; align-items:center; justify-content:space-between; padding:16px 16px 4px; z-index:5">
+              <span>9:41</span>
+              <div style="display:flex; gap:4px; align-items:center">
+                <span>●●●●</span>
+                <span>100%</span>
+              </div>
+            </div>
+            
+            <!-- Header with Mode Toggle (Fixed across all screens) -->
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 16px; z-index:5">
+              <div style="display:flex; align-items:center; gap:10px">
+                <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,#ff9bc2,#ff6fa4); box-shadow:0 4px 12px rgba(255,111,164,.4)"></div>
+                <div>
+                  <div class="app-title" style="font-weight:800; font-size:18px">Glowly</div>
+                  <div class="page-subtitle" style="font-size:11px">Your skincare companion</div>
+                </div>
+              </div>
+              <button id="mode-toggle" style="background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); padding:6px 10px; border-radius:20px; font-size:18px; cursor:pointer" title="Toggle light/dark mode">🌙</button>
+            </div>
+
+            <!-- Screen 1: Home/Routine -->
+            <div class="screen-content" id="screen-home" style="color:inherit"  data-screen="home">
+
+            <!-- Streak Card -->
+            <div class="streak-card" style="position:relative; border-radius:18px; padding:16px; margin-top:4px; backdrop-filter:blur(10px)">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                <span class="section-label" style="font-size:15px">Your Gentle Streak</span>
+                <span class="streak-flame">🔥</span>
+              </div>
+              <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:8px">
+                <span style="font-size:36px; font-weight:900; background:linear-gradient(135deg,#ff6fa4,#ffb49a); -webkit-background-clip:text; background-clip:text; color:transparent">14</span>
+                <span class="streak-label" style="font-size:14px">days strong</span>
+              </div>
+              <div class="page-subtitle" style="font-size:12px">Keep going! You're building a beautiful routine ✨</div>
+            </div>
+
+            <!-- Today's Routine -->
+            <div class="card-bg" style="border-radius:16px; padding:14px">
+              <div class="section-label" style="font-size:14px; margin-bottom:10px">Today's Care</div>
+              <div style="display:flex; gap:8px; margin-bottom:12px">
+                <div class="routine-active" style="flex:1; padding:10px; border-radius:12px; text-align:center">
+                  <div style="font-size:20px; margin-bottom:4px">☀️</div>
+                  <div class="metric-label" style="font-size:11px">Morning</div>
+                  <div class="subtitle" style="font-size:10px; margin-top:2px">3 steps</div>
+                </div>
+                <div class="inactive-card" style="flex:1; padding:10px; border-radius:12px; text-align:center">
+                  <div style="font-size:20px; margin-bottom:4px">🌙</div>
+                  <div class="metric-label" style="font-size:11px">Evening</div>
+                  <div class="page-subtitle" style="font-size:10px; margin-top:2px">4 steps</div>
+                </div>
+              </div>
+              <div class="completed-item" style="padding:8px 12px; border-radius:10px; font-size:11px; display:flex; align-items:center; gap:8px">
+                <span class="checkmark">✓</span>
+                <span class="completed-text" style="flex:1">Cleanser applied</span>
+                <span class="page-subtitle">8:32 AM</span>
+              </div>
+            </div>
+
+            <!-- Weekly Progress -->
+            <div class="card-bg" style="border-radius:16px; padding:14px">
+              <div class="section-label" style="font-size:14px; margin-bottom:10px">This Week</div>
+              <div style="display:flex; justify-content:space-between; gap:6px">
+                <div style="flex:1; text-align:center">
+                  <div style="height:32px; background:linear-gradient(0deg,#ff6fa4,#ff90be); border-radius:6px; margin-bottom:4px; position:relative"><span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; color:#fff">✓</span></div>
+                  <div class="day-label">Mon</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div style="height:36px; background:linear-gradient(0deg,#ff6fa4,#ff90be); border-radius:6px; margin-bottom:4px; position:relative"><span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; color:#fff">✓</span></div>
+                  <div class="day-label">Tue</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div style="height:40px; background:linear-gradient(0deg,#ff6fa4,#ffb49a); border-radius:6px; margin-bottom:4px; position:relative; box-shadow:0 0 12px rgba(255,111,164,.5)"><span style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:10px; color:#fff">✓</span></div>
+                  <div class="day-label" style="font-weight:700">Wed</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div class="empty-day" style="height:24px; border-radius:6px; margin-bottom:4px"></div>
+                  <div class="day-label" style="opacity:.4">Thu</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div class="empty-day" style="height:24px; border-radius:6px; margin-bottom:4px"></div>
+                  <div class="day-label" style="opacity:.4">Fri</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div class="empty-day" style="height:24px; border-radius:6px; margin-bottom:4px"></div>
+                  <div class="day-label" style="opacity:.4">Sat</div>
+                </div>
+                <div style="flex:1; text-align:center">
+                  <div class="empty-day" style="height:24px; border-radius:6px; margin-bottom:4px"></div>
+                  <div class="day-label" style="opacity:.4">Sun</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glow-message" style="margin-top:auto; text-align:center; font-size:13px">
+              <span style="font-weight:800">You're glowing</span> — keep it up! 💫
+            </div>
+            </div>
+
+            <!-- Screen 2: Face Analysis -->
+            <div class="screen-content hidden" id="screen-analysis" data-screen="analysis">
+              <div style="text-align:center; padding:8px 0 12px">
+                <h2 class="page-title">Skin Analysis</h2>
+                <p class="page-subtitle">AI-powered insights for your skin</p>
+              </div>
+
+              <!-- Analysis Result Card -->
+              <div class="card-bg" style="border-radius:16px; padding:16px; text-align:center">
+                <div class="streak-card" style="width:120px; height:120px; margin:0 auto 12px; border-radius:60px; display:flex; align-items:center; justify-content:center; font-size:60px; position:relative; overflow:visible">
+                  📸
+                </div>
+                <div class="card-title" style="font-weight:800; font-size:16px; margin-bottom:6px">Take a photo to analyze</div>
+                <div class="page-subtitle">Get personalized insights about your skin health</div>
+              </div>
+
+              <!-- Skin Metrics -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+                <div class="card-bg" style="border-radius:14px; padding:12px; text-align:center">
+                  <div style="font-size:28px">💧</div>
+                  <div class="metric-label" style="font-size:11px; font-weight:700; margin-top:4px">Hydration</div>
+                  <div class="page-subtitle" style="font-size:10px; margin-top:2px">Good</div>
+                </div>
+                <div class="card-bg" style="border-radius:14px; padding:12px; text-align:center">
+                  <div style="font-size:28px">✨</div>
+                  <div class="metric-label" style="font-size:11px; font-weight:700; margin-top:4px">Texture</div>
+                  <div class="page-subtitle" style="font-size:10px; margin-top:2px">Improving</div>
+                </div>
+                <div class="card-bg" style="border-radius:14px; padding:12px; text-align:center">
+                  <div style="font-size:28px">🎯</div>
+                  <div class="metric-label" style="font-size:11px; font-weight:700; margin-top:4px">Clarity</div>
+                  <div class="page-subtitle" style="font-size:10px; margin-top:2px">Excellent</div>
+                </div>
+                <div class="card-bg" style="border-radius:14px; padding:12px; text-align:center">
+                  <div style="font-size:28px">🛡️</div>
+                  <div class="metric-label" style="font-size:11px; font-weight:700; margin-top:4px">Protection</div>
+                  <div class="page-subtitle" style="font-size:10px; margin-top:2px">Needs SPF</div>
+                </div>
+              </div>
+
+              <!-- AI Recommendation -->
+              <div class="streak-card" style="position:relative; border-radius:16px; padding:14px">
+                <div class="section-label" style="margin-bottom:6px">💡 AI Recommendation</div>
+                <div class="page-subtitle" style="font-size:11px; line-height:1.5">Focus on sun protection and hydration. Your routine is working great!</div>
+              </div>
+            </div>
+
+            <!-- Screen 3: Product Scanner -->
+            <div class="screen-content hidden" id="screen-scanner" data-screen="scanner">
+              <div style="text-align:center; padding:8px 0 12px">
+                <h2 class="page-title">Product Scanner</h2>
+                <p class="page-subtitle">Check if products match your skin</p>
+              </div>
+
+              <!-- Scanner UI -->
+              <div class="card-bg" style="border-radius:16px; padding:16px; text-align:center">
+                <div class="scanner-frame" style="width:140px; height:140px; margin:0 auto; border-radius:16px; display:flex; align-items:center; justify-content:center">
+                  <div style="font-size:48px">📦</div>
+                </div>
+                <div class="card-title" style="font-weight:800; font-size:16px; margin:12px 0 6px">Scan product barcode</div>
+                <div class="page-subtitle">or search by name</div>
+              </div>
+
+              <!-- Recently Scanned -->
+              <div style="margin-top:8px">
+                <div class="section-label" style="margin-bottom:8px; padding:0 4px">Recently Scanned</div>
+                
+                <div class="completed-item" style="padding:10px; border-radius:12px; margin-bottom:6px; display:flex; align-items:center; gap:10px">
+                  <div class="product-icon" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px">
+                    🧴
+                  </div>
+                  <div style="flex:1">
+                    <div class="metric-label" style="font-size:12px">Gentle Cleanser</div>
+                    <div class="page-subtitle" style="font-size:10px">✓ Perfect match</div>
+                  </div>
+                  <div style="font-size:18px">💚</div>
+                </div>
+
+                <div class="completed-item" style="padding:10px; border-radius:12px; margin-bottom:6px; display:flex; align-items:center; gap:10px">
+                  <div class="product-icon" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px">
+                    ☀️
+                  </div>
+                  <div style="flex:1">
+                    <div class="metric-label" style="font-size:12px">SPF 50 Sunscreen</div>
+                    <div class="page-subtitle" style="font-size:10px">✓ Great for you</div>
+                  </div>
+                  <div style="font-size:18px">💚</div>
+                </div>
+
+                <div class="card-bg" style="padding:10px; border-radius:12px; display:flex; align-items:center; gap:10px; opacity:.6">
+                  <div class="product-icon-inactive" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px">
+                    💄
+                  </div>
+                  <div style="flex:1">
+                    <div class="metric-label" style="font-size:12px">Retinol Serum</div>
+                    <div class="page-subtitle" style="font-size:10px">⚠️ Use with caution</div>
+                  </div>
+                  <div style="font-size:18px">⚠️</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tab-bar">
+              <div class="tab-item active" data-tab="home">
+                <div class="tab-icon">🏠</div>
+                <div class="tab-label">Home</div>
+              </div>
+              <div class="tab-item" data-tab="analysis">
+                <div class="tab-icon">📊</div>
+                <div class="tab-label">Analysis</div>
+              </div>
+              <div class="tab-item" data-tab="scanner">
+                <div class="tab-icon">📦</div>
+                <div class="tab-label">Scanner</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="learn">
+      <h2>Skincare that celebrates you</h2>
+      <p class="lead">Smart AI vision meets warm encouragement. Track your glow-up journey with insights that empower, streaks that motivate gently, and language that always has your back.</p>
+      <div class="features">
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3l2.4 4.86L20 9l-4 3.9.94 5.5L12 16.9 7.06 18.4 8 12.9 4 9l5.6-1.14L12 3z" stroke="#DB3E83" stroke-width="1.5"/></svg>
+          <h3>Streaks that inspire, not pressure</h3>
+          <p>Track your consistency with gentle reminders and celebrate every win—no matter how small. Miss a day? We've got your back.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#DB3E83" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="#DB3E83" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <h3>Routines that fit your rhythm</h3>
+          <p>Build morning and evening care routines that work for your schedule. Quick check-ins, helpful reminders, zero judgment.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 10c0 5-9 11-9 11S3 15 3 10a9 9 0 1118 0z" stroke="#DB3E83" stroke-width="1.5"/><circle cx="12" cy="10" r="3" stroke="#DB3E83" stroke-width="1.5"/></svg>
+          <h3>Insights that understand you</h3>
+          <p>AI-powered skin analysis and personalized suggestions that adapt as your skin changes. Real support, real results.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="#DB3E83"/></svg>
+          <h3>Dark mode for late-night care</h3>
+          <p>Gorgeous themes that adapt to your time of day. Easy on the eyes, easy on your wind-down routine.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#DB3E83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Progress you can see</h3>
+          <p>Weekly charts, milestone celebrations, and before-and-after views that show how far you've come.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="#DB3E83" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Your data, your control</h3>
+          <p>Privacy-first architecture. Your photos and progress stay yours, always encrypted, never sold.</p>
+        </article>
+      </div>
+      <div class="band">
+        <span class="chip">🔒 Privacy-first AI</span>
+        <span class="chip">✨ Warm language</span>
+        <span class="chip">🎯 Science-backed</span>
+        <span class="chip">💝 Made with care</span>
+      </div>
+    </section>
+
+    <section class="section" id="love">
+      <h2>Join thousands building better routines</h2>
+      <div class="testimonials">
+        <div class="quote">
+          <blockquote>"Finally, a skincare app that doesn't make me feel guilty. Glowly celebrates what I *do* accomplish instead of focusing on what I miss. The streak feature is addictive in the best way!"</blockquote>
+          <div class="cite">— Sarah M., Beta user</div>
+        </div>
+        <div class="quote">
+          <blockquote>"I love the dark mode for my evening routine. The whole vibe is so calming—like having a supportive friend checking in. Plus seeing my 30-day streak makes me so proud of myself."</blockquote>
+          <div class="cite">— Alex K., Early tester</div>
+        </div>
+        <div class="quote">
+          <blockquote>"The AI skin analysis is surprisingly accurate, but what keeps me coming back is how the app *talks* to me. No shame, no pressure, just gentle encouragement. It's exactly what I needed."</blockquote>
+          <div class="cite">— Jordan P., Preview user</div>
+        </div>
+      </div>
+      <div class="cta-panel" id="join">
+        <div class="row">
+          <div>
+            <h3 style="margin:0 0 8px; font-size:24px">Ready to glow?</h3>
+            <p style="margin:0"><strong>Join the early access list.</strong> Be among the first to build routines you'll love, track progress that feels good, and experience skincare support that truly cares. No spam, just updates that matter.</p>
+          </div>
+          <form class="newsletter" id="newsletter" aria-label="Join the Glowly waitlist">
+            <input type="email" id="email" placeholder="your@email.com" aria-label="Email address" required>
+            <button type="submit">Get early access ✨</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:28px; padding:24px 0">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
+          <div style="width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,#ff9bc2,#ff6fa4); box-shadow:0 6px 16px rgba(255,111,164,.3)"></div>
+          <b style="font-family:Manrope,Inter; font-weight:800; font-size:18px">Glowly</b>
+        </div>
+        <p style="max-width:32ch; margin:0; font-size:14px; color:#6a626f">Your warm AI skincare companion. Building routines that feel good, one day at a time.</p>
+      </div>
+      <div class="links">
+        <a href="#home" style="text-decoration:none; color:#6a626f; font-weight:600">Home</a>
+        <a href="#learn" style="text-decoration:none; color:#6a626f; font-weight:600">Features</a>
+        <a href="#love" style="text-decoration:none; color:#6a626f; font-weight:600">Testimonials</a>
+        <a href="mailto:hello@glowly.app" style="text-decoration:none; color:#6a626f; font-weight:600">Contact</a>
+      </div>
+    </div>
+    <div style="padding:20px 0; border-top:1px solid #ffe2ee; text-align:center; font-size:14px; color:#8a7d8f">
+      © <span id="yr"></span> Glowly. Made with 💝 for your skincare journey.
+    </div>
+  </footer>
+
+  <script>
+    // UTIL: clamp and lerp
+    const lerp=(a,b,t)=>a+(b-a)*t
+
+    // 1) Ambient soft blobs: animated canvas background
+    ;(function(){
+      const c = document.getElementById('glow')
+      const ctx = c.getContext('2d')
+      let w,h, dpr
+      const blobs = []
+      const COLORS = [
+        [255, 175, 205],
+        [255, 144, 190],
+        [255, 201, 221],
+        [255, 180, 154]
+      ]
+      function resize(){
+        dpr = window.devicePixelRatio || 1
+        w = c.clientWidth; h = c.clientHeight
+        c.width = w * dpr; c.height = h * dpr
+        ctx.setTransform(dpr,0,0,dpr,0,0)
+      }
+      window.addEventListener('resize', resize, {passive:true})
+      resize()
+
+      const N = 16
+      for(let i=0;i<N;i++){
+        blobs.push({
+          x: Math.random()*window.innerWidth,
+          y: Math.random()*window.innerHeight,
+          r: 80+Math.random()*180,
+          hue: COLORS[i%COLORS.length],
+          vx: (Math.random()-.5)*0.25,
+          vy: (Math.random()-.5)*0.25,
+        })
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,w,h)
+        for(const b of blobs){
+          b.x+=b.vx; b.y+=b.vy
+          if(b.x<-200) b.x=w+200; if(b.x>w+200) b.x=-200
+          if(b.y<-200) b.y=h+200; if(b.y>h+200) b.y=-200
+          const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r)
+          const [r,gc,bc]=b.hue
+          g.addColorStop(0, `rgba(${r},${gc},${bc},0.22)`)
+          g.addColorStop(1, 'rgba(255,255,255,0)')
+          ctx.fillStyle=g
+          ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill()
+        }
+        requestAnimationFrame(draw)
+      }
+      draw()
+    })()
+
+    // 2) Scroll-reveal for cards & features
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); observer.unobserve(e.target)} })
+    },{ threshold: 0.15 })
+    document.querySelectorAll('.card, .feature').forEach(el=>observer.observe(el))
+
+    // 3) Newsletter faux submit with confetti
+    const form = document.getElementById('newsletter')
+    const emailInput = document.getElementById('email')
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault()
+      const email = emailInput.value.trim()
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ emailInput.focus(); emailInput.style.borderColor = '#ff6fa4'; return }
+      // Persist locally (you can replace with your backend later)
+      const list = JSON.parse(localStorage.getItem('glowly-waitlist')||'[]')
+      if(!list.includes(email)) list.push(email)
+      localStorage.setItem('glowly-waitlist', JSON.stringify(list))
+
+      // Tiny confetti celebration
+      confetti()
+
+      form.innerHTML = '<div role="status" aria-live="polite" style="font-weight:800; text-align:center; padding:20px; background:rgba(255,255,255,.95); border-radius:14px; animation:slideIn .4s cubic-bezier(.2,.7,.2,1)"><div style="font-size:48px; margin-bottom:8px">✨</div><div style="font-size:18px; margin-bottom:6px">You\'re on the list!</div><div style="font-size:14px; opacity:.8; font-weight:500">We\'ll reach out when it\'s time to glow 💝</div></div>'
+    })
+
+    // 4) Button shortcut
+    document.getElementById('btn-join').addEventListener('click',()=>{
+      document.getElementById('email').focus({preventScroll:false});
+      document.getElementById('email').scrollIntoView({behavior:'smooth', block:'center'})
+    })
+
+    // 5) Footer year
+    document.getElementById('yr').textContent = new Date().getFullYear()
+
+    // 6) Tab switching for phone mockup with auto-cycling
+    const tabItems = document.querySelectorAll('.tab-item')
+    const screenContents = document.querySelectorAll('.screen-content')
+    let autoCycleInterval = null
+    let isAutoCycling = true
+    let currentTabIndex = 0
+    
+    function switchToTab(targetTab, isAutoClick = false) {
+      // Find the tab element
+      const tabElement = Array.from(tabItems).find(t => t.dataset.tab === targetTab)
+      
+      // Update active tab
+      tabItems.forEach(t => {
+        t.classList.remove('active', 'auto-cycling')
+      })
+      tabElement.classList.add('active')
+      if(isAutoClick) {
+        tabElement.classList.add('auto-cycling')
+      }
+      
+      // Switch screens
+      screenContents.forEach(screen => {
+        if(screen.dataset.screen === targetTab) {
+          screen.classList.remove('hidden')
+        } else {
+          screen.classList.add('hidden')
+        }
+      })
+    }
+    
+    function startAutoCycle() {
+      const tabs = ['home', 'analysis', 'scanner']
+      
+      // Add pulse to current (home) tab immediately
+      const currentTab = Array.from(tabItems).find(t => t.dataset.tab === tabs[currentTabIndex])
+      if(currentTab) {
+        currentTab.classList.add('auto-cycling')
+      }
+      
+      autoCycleInterval = setInterval(() => {
+        if(!isAutoCycling) return
+        
+        // Move to next tab
+        currentTabIndex = (currentTabIndex + 1) % tabs.length
+        const targetTab = tabs[currentTabIndex]
+        
+        // Add click animation
+        const tabElement = Array.from(tabItems).find(t => t.dataset.tab === targetTab)
+        tabElement.classList.add('auto-clicking')
+        
+        // Switch after brief delay
+        setTimeout(() => {
+          tabElement.classList.remove('auto-clicking')
+          switchToTab(targetTab, true)
+        }, 300)
+        
+      }, 5000)
+    }
+    
+    function stopAutoCycle() {
+      isAutoCycling = false
+      if(autoCycleInterval) {
+        clearInterval(autoCycleInterval)
+        autoCycleInterval = null
+      }
+      // Remove all auto-cycling indicators
+      tabItems.forEach(t => t.classList.remove('auto-cycling', 'auto-clicking'))
+      
+      // Remove tap hint
+      const phone = document.querySelector('.phone')
+      phone.classList.add('tapped')
+    }
+    
+    // Manual click handler
+    tabItems.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Stop auto-cycling on user interaction
+        stopAutoCycle()
+        
+        const targetTab = tab.dataset.tab
+        switchToTab(targetTab, false)
+      })
+    })
+    
+    // Start auto-cycling after 800ms (let page settle)
+    setTimeout(() => {
+      if(isAutoCycling) {
+        startAutoCycle()
+      }
+    }, 800)
+    
+    // 7) Mode toggle for phone mockup with time-based default
+    const modeToggle = document.getElementById('mode-toggle')
+    const appScreen = document.getElementById('app-screen')
+    
+    // Detect time of day (6 AM - 6 PM = day, otherwise night)
+    const hour = new Date().getHours()
+    const isDay = hour >= 6 && hour < 18
+    let isDark = !isDay // Start with light mode during day, dark at night
+    
+    // Set initial theme based on time
+    if(!isDark) {
+      appScreen.classList.add('light-mode')
+      modeToggle.textContent = '☀️'
+      modeToggle.style.background = 'rgba(255,111,164,.15)'
+      modeToggle.style.border = '1px solid rgba(255,111,164,.3)'
+    }
+    
+    modeToggle.addEventListener('click', (e) => {
+      e.preventDefault()
+      isDark = !isDark
+      
+      if(isDark) {
+        // Switch to dark mode
+        appScreen.classList.remove('light-mode')
+        modeToggle.textContent = '🌙'
+        modeToggle.style.background = 'rgba(255,255,255,.1)'
+        modeToggle.style.border = '1px solid rgba(255,255,255,.2)'
+      } else {
+        // Switch to light mode
+        appScreen.classList.add('light-mode')
+        modeToggle.textContent = '☀️'
+        modeToggle.style.background = 'rgba(255,111,164,.15)'
+        modeToggle.style.border = '1px solid rgba(255,111,164,.3)'
+      }
+      
+      // Add a subtle scale animation
+      modeToggle.style.transform = 'scale(1.1)'
+      setTimeout(() => {
+        modeToggle.style.transform = 'scale(1)'
+      }, 150)
+    })
+
+    // Simple confetti using canvas overlay
+    function confetti(){
+      const c = document.createElement('canvas'); c.width=window.innerWidth; c.height=window.innerHeight; c.style.position='fixed'; c.style.inset='0'; c.style.pointerEvents='none'; c.style.zIndex='50'; document.body.appendChild(c)
+      const ctx = c.getContext('2d')
+      const pieces = []
+      const colors = ['#FF6FA4','#FF90BE','#FFC9DD','#FFB49A','#FFFFFF']
+      const count = 160
+      for(let i=0;i<count;i++){
+        pieces.push({x:Math.random()*c.width, y:-20-Math.random()*50, r:3+Math.random()*6, vx:(Math.random()-.5)*1.5, vy:1+Math.random()*2.5, rot:Math.random()*Math.PI, vr:(Math.random()-.5)*0.2, color:colors[Math.floor(Math.random()*colors.length)]})
+      }
+      let t=0, id
+      (function draw(){
+        id=requestAnimationFrame(draw)
+        ctx.clearRect(0,0,c.width,c.height)
+        pieces.forEach(p=>{
+          p.vy += 0.01; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.color; ctx.globalAlpha=0.9
+          ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2)
+          ctx.restore()
+        })
+        t++
+        if(t>300){ cancelAnimationFrame(id); c.remove() }
+      })()
+    }
+  </script>
+</body>
+</html>
