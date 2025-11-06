@@ -420,7 +420,7 @@
             <!-- Header with Mode Toggle (Fixed across all screens) -->
             <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 16px; z-index:5">
               <div style="display:flex; align-items:center; gap:10px">
-                <img src="icon.png" alt="Glowly" style="width:32px; height:32px; display:block; border-radius:7px" />
+                <img id="phone-logo" src="icon.png" alt="Glowly" style="width:32px; height:32px; display:block; border-radius:7px" />
                 <div>
                   <div class="page-subtitle" style="font-size:11px">Your skincare companion</div>
                 </div>
@@ -961,6 +961,7 @@
     // 7) Mode toggle for phone mockup with time-based default
     const modeToggle = document.getElementById('mode-toggle')
     const appScreen = document.getElementById('app-screen')
+    const phoneLogo = document.getElementById('phone-logo')
     
     // Detect time of day (6 AM - 6 PM = day, otherwise night)
     const hour = new Date().getHours()
@@ -973,6 +974,9 @@
       modeToggle.textContent = '☀️'
       modeToggle.style.background = 'rgba(255,111,164,.15)'
       modeToggle.style.border = '1px solid rgba(255,111,164,.3)'
+      phoneLogo.src = 'icon.png'
+    } else {
+      phoneLogo.src = 'icon-dark.png'
     }
     
     modeToggle.addEventListener('click', (e) => {
@@ -985,12 +989,14 @@
         modeToggle.textContent = '🌙'
         modeToggle.style.background = 'rgba(255,255,255,.1)'
         modeToggle.style.border = '1px solid rgba(255,255,255,.2)'
+        phoneLogo.src = 'icon-dark.png'
       } else {
         // Switch to light mode
         appScreen.classList.add('light-mode')
         modeToggle.textContent = '☀️'
         modeToggle.style.background = 'rgba(255,111,164,.15)'
         modeToggle.style.border = '1px solid rgba(255,111,164,.3)'
+        phoneLogo.src = 'icon.png'
       }
       
       // Add a subtle scale animation
