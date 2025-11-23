@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   <!-- Primary SEO Meta Tags -->
-  <title>Glowly - Best Skin Care App with AI Face Analysis & Routine Tracker</title>
-  <meta name="description" content="Glowly is the #1 skincare app with AI face analysis, personalized routine tracking, and product scanning. Track your skin care journey, build habits, and get glowing skin with our intelligent skincare companion app." />
-  <meta name="keywords" content="skin care app, skincare app, face analysis app, skin analysis app, skincare routine tracker, beauty routine app, AI skin analysis, skincare tracking app, personalized skincare, skincare habit tracker, product scanner, face scanning app, best skincare app, skin health app, beauty tracking app" />
+  <title>Glowly - Top-Rated Skin Care App with AI Face Analysis & Routine Tracker</title>
+  <meta name="description" content="Glowly is a leading skincare app with AI face analysis, personalized routine tracking, and product scanning. Track your skin care journey, build habits, and get glowing skin with our intelligent skincare companion app." />
   <meta name="author" content="Glowly" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <link rel="canonical" href="https://glowlyme.com/" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glowlyme.com/" />
   <meta property="og:site_name" content="Glowly - Skin Care App" />
-  <meta property="og:title" content="Glowly - Best Skin Care App with AI Face Analysis & Routine Tracker" />
+  <meta property="og:title" content="Glowly - Top-Rated Skin Care App with AI Face Analysis & Routine Tracker" />
   <meta property="og:description" content="Track your skincare journey with AI-powered face analysis, smart routine tracking, and product scanning. Build healthy skin care habits that last." />
   <meta property="og:image" content="https://glowlyme.com/og-image.png" />
   <meta property="og:image:width" content="1200" />
@@ -25,8 +25,10 @@
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlowlyApp" />
+  <meta name="twitter:creator" content="@GlowlyApp" />
   <meta name="twitter:url" content="https://glowlyme.com/" />
-  <meta name="twitter:title" content="Glowly - Best Skin Care App with AI Face Analysis" />
+  <meta name="twitter:title" content="Glowly - Top-Rated Skin Care App with AI Face Analysis" />
   <meta name="twitter:description" content="Track your skincare journey with AI-powered face analysis, smart routine tracking, and product scanning. Build healthy skin care habits that last." />
   <meta name="twitter:image" content="https://glowlyme.com/og-image.png" />
   
@@ -57,14 +59,8 @@
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "1247",
-      "bestRating": "5",
-      "worstRating": "1"
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/PreOrder"
     },
     "description": "Glowly is an AI-powered skin care app that helps you track your skincare routine, analyze your face and skin health, scan products, and build lasting beauty habits with personalized insights and gentle progress tracking.",
     "featureList": [
@@ -77,13 +73,12 @@
       "Smart Reminders",
       "Dark Mode Support"
     ],
-    "screenshot": "https://glowlyme.com/screenshot.png",
     "url": "https://glowlyme.com",
     "author": {
       "@type": "Organization",
       "name": "Glowly"
     },
-    "datePublished": "2025-01-01"
+    "datePublished": "2024-11-01"
   }
   </script>
   
@@ -92,12 +87,7 @@
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Glowly",
-    "url": "https://glowlyme.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://glowlyme.com/?s={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "url": "https://glowlyme.com"
   }
   </script>
   
@@ -107,13 +97,44 @@
     "@type": "Organization",
     "name": "Glowly",
     "url": "https://glowlyme.com",
-    "logo": "https://glowlyme.com/logo.png",
-    "sameAs": [],
+    "logo": "https://glowlyme.com/icon.png",
+    "sameAs": [
+      "https://twitter.com/GlowlyApp",
+      "https://instagram.com/glowlyapp"
+    ],
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "hello@glowly.app",
-      "contactType": "Customer Service"
+      "contactType": "Customer Service",
+      "availableLanguage": ["en"]
     }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://glowlyme.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Features",
+        "item": "https://glowlyme.com/#learn"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Testimonials",
+        "item": "https://glowlyme.com/#love"
+      }
+    ]
   }
   </script>
   
@@ -373,7 +394,7 @@
   <header>
     <div class="container nav">
       <a class="brand" href="#" aria-label="Glowly home">
-        <img class="logo" src="icon.png" alt="Glowly" />
+        <img class="logo" src="icon.png" alt="Glowly" width="38" height="38" />
       </a>
       <nav class="links" aria-label="primary">
         <a class="cta" href="#join">Get Early Access</a>
@@ -382,11 +403,11 @@
   </header>
 
   <main class="container" role="main">
-    <section class="hero" id="home" itemscope itemtype="https://schema.org/Product">
+    <section class="hero" id="home">
       <div>
-        <span class="pill" role="text">✨ The best skincare tracking app that feels like self-care</span>
-        <h1 itemprop="name">The #1 <strong>Skin Care App</strong> with AI Face Analysis & <span style="background:linear-gradient(90deg, var(--pink-600), var(--peach)); -webkit-background-clip:text; background-clip:text; color:transparent">Routine Tracker</span></h1>
-        <p class="sub" itemprop="description">Glowly is your intelligent <strong>AI skincare companion app</strong> that helps you track your beauty routine, analyze your skin health with face scanning technology, and build lasting habits. Get personalized skincare insights, scan products, and celebrate your glow-up journey with our habit tracker—even when you miss a day.</p>
+        <span class="pill" role="text">✨ A top-rated skincare tracking app that feels like self-care</span>
+        <h1>Glowly - Your <strong>Skin Care App</strong> with AI Face Analysis & <span style="background:linear-gradient(90deg, var(--pink-600), var(--peach)); -webkit-background-clip:text; background-clip:text; color:transparent">Routine Tracker</span></h1>
+        <p class="sub">Glowly is your intelligent <strong>AI skincare companion app</strong> that helps you track your beauty routine, analyze your skin health with face scanning technology, and build lasting habits. Get personalized skincare insights, scan products, and celebrate your glow-up journey with our habit tracker—even when you miss a day.</p>
         <div class="cta-row">
           <button class="btn" id="btn-join">Get early access</button>
           <a href="#learn" class="btn secondary">See how it works</a>
@@ -398,7 +419,7 @@
         </div>
         <div style="text-align:center; margin-top:20px; font-size:14px; color:#7A2048; font-weight:600" role="complementary">
           <span style="background:linear-gradient(135deg,rgba(255,111,164,.1),rgba(255,180,154,.08)); padding:8px 16px; border-radius:999px; border:1px solid rgba(255,111,164,.2); display:inline-flex; align-items:center; gap:8px" role="text">
-            <img src="icon.png" alt="Glowly" style="width:20px; height:20px; display:block; border-radius:4px" />
+            <img src="icon.png" alt="Glowly" width="20" height="20" style="display:block; border-radius:4px" />
             👉 Try the interactive demo — tap the phone! 
           </span>
         </div>
@@ -420,7 +441,7 @@
             <!-- Header with Mode Toggle (Fixed across all screens) -->
             <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 16px; z-index:5">
               <div style="display:flex; align-items:center; gap:10px">
-                <img id="phone-logo" src="icon.png" alt="Glowly" style="width:32px; height:32px; display:block; border-radius:7px" />
+                <img id="phone-logo" src="icon.png" alt="Glowly" width="32" height="32" style="display:block; border-radius:7px" loading="lazy" />
                 <div>
                   <div class="page-subtitle" style="font-size:11px">Your skincare companion</div>
                 </div>
@@ -672,28 +693,25 @@
     </section>
 
     <section class="section" id="love" aria-labelledby="testimonials-heading">
-      <h2 id="testimonials-heading">Join Thousands Building Better Skincare Routines</h2>
+      <h2 id="testimonials-heading">Join Early Adopters Building Better Skincare Routines</h2>
       <div class="testimonials" role="list">
-        <article class="quote" role="listitem" itemscope itemtype="https://schema.org/Review">
-          <blockquote itemprop="reviewBody">"Finally, a skin care app that doesn't make me feel guilty. Glowly celebrates what I *do* accomplish instead of focusing on what I miss. The habit streak tracker feature is addictive in the best way!"</blockquote>
-          <div class="cite" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Sarah M.</span>, Beta user</div>
-          <meta itemprop="reviewRating" content="5">
+        <article class="quote" role="listitem">
+          <blockquote>"Finally, a skin care app that doesn't make me feel guilty. Glowly celebrates what I *do* accomplish instead of focusing on what I miss. The habit streak tracker feature is addictive in the best way!"</blockquote>
+          <div class="cite">Sarah M., Beta user</div>
         </article>
-        <article class="quote" role="listitem" itemscope itemtype="https://schema.org/Review">
-          <blockquote itemprop="reviewBody">"I love the dark mode for my evening skincare routine. The whole vibe is so calming—like having a supportive companion. Plus seeing my 30-day streak makes me so proud of myself."</blockquote>
-          <div class="cite" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Alex K.</span>, Early tester</div>
-          <meta itemprop="reviewRating" content="5">
+        <article class="quote" role="listitem">
+          <blockquote>"I love the dark mode for my evening skincare routine. The whole vibe is so calming—like having a supportive companion. Plus seeing my 30-day streak makes me so proud of myself."</blockquote>
+          <div class="cite">Alex K., Early tester</div>
         </article>
-        <article class="quote" role="listitem" itemscope itemtype="https://schema.org/Review">
-          <blockquote itemprop="reviewBody">"The AI face analysis and skin health tracking is surprisingly accurate, but what keeps me coming back is how the app *talks* to me. No shame, no pressure, just gentle encouragement. Exactly what I needed."</blockquote>
-          <div class="cite" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Jordan P.</span>, Preview user</div>
-          <meta itemprop="reviewRating" content="5">
+        <article class="quote" role="listitem">
+          <blockquote>"The AI face analysis and skin health tracking is surprisingly accurate, but what keeps me coming back is how the app *talks* to me. No shame, no pressure, just gentle encouragement. Exactly what I needed."</blockquote>
+          <div class="cite">Jordan P., Preview user</div>
         </article>
       </div>
       <aside class="cta-panel" id="join" role="complementary" aria-labelledby="cta-heading">
         <div class="row">
           <div>
-            <h3 id="cta-heading" style="margin:0 0 8px; font-size:24px">Get Early Access to the Best Skin Care App</h3>
+            <h3 id="cta-heading" style="margin:0 0 8px; font-size:24px">Get Early Access to Glowly</h3>
             <p style="margin:0"><strong>Join the waitlist for Glowly.</strong> Be among the first to track your skincare routine with AI face analysis, build healthy habits with our streak tracker, scan products, and get personalized insights. No spam, just updates on when we launch.</p>
           </div>
           <form class="newsletter" id="newsletter" aria-label="Join the Glowly skin care app waitlist" action="https://api.web3forms.com/submit" method="POST">
@@ -712,7 +730,7 @@
     <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:28px; padding:24px 0">
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
-          <img src="icon.png" alt="Glowly logo" style="width:32px; height:32px; display:block; border-radius:7px" />
+          <img src="icon.png" alt="Glowly logo" width="32" height="32" style="display:block; border-radius:7px" loading="lazy" />
         </div>
         <p style="max-width:32ch; margin:0; font-size:14px; color:#6a626f">Glowly - Your AI-powered skincare companion app. Building healthy beauty routines with face analysis, habit tracking, and personalized insights.</p>
       </div>
@@ -724,7 +742,7 @@
       </nav>
     </div>
     <div style="padding:20px 0; border-top:1px solid #ffe2ee; text-align:center; font-size:14px; color:#8a7d8f">
-      <p style="margin:0">© <span id="yr"></span> Glowly - Best Skin Care App with AI Analysis. Made with 💝 for your skincare journey.</p>
+      <p style="margin:0">© <span id="yr"></span> Glowly - AI-Powered Skin Care App. Made with 💝 for your skincare journey.</p>
     </div>
   </footer>
 
