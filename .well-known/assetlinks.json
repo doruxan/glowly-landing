@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.glowly.skinanalyzer",
+      "sha256_cert_fingerprints": [
+        "F5:49:7D:03:01:7C:E0:6B:6F:2B:5D:B0:A4:2C:DA:51:47:1B:83:A1:F6:37:90:61:03:61:F6:37:D8:40:42:53"
+      ]
+    }
+  }
+]
+

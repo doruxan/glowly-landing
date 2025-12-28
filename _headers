@@ -44,6 +44,16 @@
 /*.html
   Cache-Control: public, max-age=3600, must-revalidate
 
+# Apple App Site Association - MUST be served as JSON
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
+
+# Android Asset Links - MUST be served as JSON
+/.well-known/assetlinks.json
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600
+
 # Security headers
 /*
   X-Content-Type-Options: nosniff

@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "S6Z7ZUGZ79.com.glowly.skinanalyzer",
+        "paths": [
+          "/r/*",
+          "/referral",
+          "/referral/*"
+        ]
+      }
+    ]
+  }
+}
+
