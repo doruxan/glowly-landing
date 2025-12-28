@@ -9,6 +9,30 @@
           "/referral",
           "/referral/*"
         ]
+      },
+      {
+        "appID": "S6Z7ZUGZ79.com.glowly.skinanalyzer.development",
+        "paths": [
+          "/r/*",
+          "/referral",
+          "/referral/*"
+        ]
+      },
+      {
+        "appID": "S6Z7ZUGZ79.com.glowly.skinanalyzer.test",
+        "paths": [
+          "/r/*",
+          "/referral",
+          "/referral/*"
+        ]
+      },
+      {
+        "appID": "S6Z7ZUGZ79.com.glowly.skinanalyzer.preview",
+        "paths": [
+          "/r/*",
+          "/referral",
+          "/referral/*"
+        ]
       }
     ]
   }
