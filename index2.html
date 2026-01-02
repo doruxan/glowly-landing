@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Glowly — AI Skincare Brief (Portable, AI-Compatible)</title>
+  <meta name="description" content="Generate a structured AI Skincare Brief from your routine, skin type, concerns, and goals — a portable, AI-compatible snapshot of Glowly’s approach. The app goes deeper with photos, history, and progress tracking." />
+  <meta name="theme-color" content="#ff7aa6" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Glowly — AI Skincare Brief" />
+  <meta property="og:description" content="A portable, AI-compatible snapshot of Glowly’s skincare intelligence. The app goes deeper with photos + progress tracking." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root{
+      /* Glowly-ish palette (pastel pink/peach/lavender/cream) */
+      --bg: #fff7fb;
+      --surface: rgba(255,255,255,.72);
+      --surface2: rgba(255,255,255,.86);
+      --border: rgba(26, 26, 26, .10);
+      --text: #17171a;
+      --muted: rgba(23,23,26,.68);
+
+      --pink: #ff7aa6;
+      --pink2:#ff4f8b;
+      --peach:#ffb38a;
+      --lav:#b89bff;
+      --mint:#7be0c3;
+      --cream:#fff1d6;
+
+      --shadow: 0 20px 60px rgba(30,10,25,.12);
+      --shadow2: 0 12px 30px rgba(30,10,25,.10);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255,122,166,.30), transparent 55%),
+        radial-gradient(900px 700px at 80% 15%, rgba(184,155,255,.25), transparent 55%),
+        radial-gradient(900px 700px at 70% 85%, rgba(255,179,138,.22), transparent 55%),
+        radial-gradient(800px 600px at 25% 85%, rgba(123,224,195,.18), transparent 55%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+
+    a{color:inherit}
+    .container{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+
+    /* Top Nav */
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      position:sticky;
+      top:0;
+      z-index:50;
+      padding: 14px 0;
+      backdrop-filter: blur(10px);
+    }
+    .nav::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(to bottom, rgba(255,247,251,.85), rgba(255,247,251,.55));
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      transform: translateY(-14px);
+      height: calc(100% + 14px);
+      z-index:-1;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; text-decoration:none;
+    }
+    .logo{
+      width: 38px; height: 38px;
+      border-radius: 14px;
+      background:
+        radial-gradient(12px 12px at 30% 35%, rgba(255,255,255,.9), rgba(255,255,255,0) 60%),
+        linear-gradient(135deg, var(--pink), var(--lav));
+      box-shadow: 0 10px 24px rgba(255,79,139,.22);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: radial-gradient(circle at 30% 20%, rgba(255,241,214,.55), transparent 55%);
+      transform: rotate(18deg);
+    }
+    .brand .name{
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 16px;
+    }
+    .brand .tag{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .nav-actions{
+      display:flex; gap:10px; align-items:center;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(0,0,0,.07);
+      box-shadow: 0 10px 24px rgba(30,10,25,.06);
+      font-weight:700;
+      font-size: 13px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .pill strong{font-weight:900}
+    .pill.primary{
+      background: linear-gradient(135deg, rgba(255,122,166,.96), rgba(184,155,255,.90));
+      border-color: rgba(255,255,255,.45);
+      color:white;
+      box-shadow: 0 16px 36px rgba(255,79,139,.20);
+    }
+    .pill.primary:hover{filter:brightness(1.02)}
+    .pill:hover{transform: translateY(-1px)}
+    .pill:active{transform: translateY(0px)}
+
+    /* Hero */
+    .hero{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items:stretch;
+    }
+    .card{
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      backdrop-filter: blur(12px);
+    }
+    .hero h1{
+      margin:0 0 10px;
+      font-size: 40px;
+      line-height: 1.07;
+      letter-spacing: -0.03em;
+    }
+    .hero p{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.55;
+      font-size: 15px;
+      max-width: 62ch;
+    }
+    .badge-row{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 14px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.07);
+      background: rgba(255,255,255,.70);
+      box-shadow: 0 12px 28px rgba(30,10,25,.06);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .dot{
+      width: 9px; height: 9px; border-radius: 999px;
+      background: var(--pink2);
+      box-shadow: 0 0 0 4px rgba(255,79,139,.12);
+    }
+    .dot.lav{background: var(--lav); box-shadow: 0 0 0 4px rgba(184,155,255,.14)}
+    .dot.peach{background: var(--peach); box-shadow: 0 0 0 4px rgba(255,179,138,.16)}
+    .dot.mint{background: var(--mint); box-shadow: 0 0 0 4px rgba(123,224,195,.16)}
+
+    .hero-right{
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      height:100%;
+    }
+    .mini{
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, rgba(255,255,255,.68), rgba(255,255,255,.46));
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      backdrop-filter: blur(12px);
+    }
+    .mini h3{
+      margin:0 0 6px;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .mini p{
+      margin:0;
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+    .mini .list{
+      margin-top: 10px;
+      display:grid;
+      gap:8px;
+    }
+    .mini .li{
+      display:flex; gap:10px; align-items:flex-start;
+      background: rgba(255,255,255,.60);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 14px;
+      padding: 10px 11px;
+      box-shadow: 0 10px 24px rgba(30,10,25,.05);
+    }
+    .check{
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,122,166,.92), rgba(184,155,255,.90));
+      box-shadow: 0 10px 24px rgba(255,79,139,.16);
+      margin-top: 1px;
+      flex: 0 0 18px;
+      position:relative;
+    }
+    .check:after{
+      content:"";
+      position:absolute;
+      width: 8px; height: 4px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg);
+      left: 5px; top: 6px;
+      opacity:.95;
+    }
+
+    /* Main layout */
+    .main{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items:start;
+    }
+    .section-title{
+      display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+      margin-bottom: 14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+    .section-title .sub{
+      margin:0;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 13px;
+    }
+
+    /* Form */
+    form{display:grid; gap: 12px}
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    label{
+      display:block;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: rgba(23,23,26,.76);
+      margin-bottom: 6px;
+    }
+    .field{
+      background: var(--surface2);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      box-shadow: 0 10px 24px rgba(30,10,25,.06);
+      backdrop-filter: blur(10px);
+    }
+    input, select, textarea{
+      width:100%;
+      border: 0;
+      outline:none;
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 14px;
+      font-family: var(--sans);
+      padding: 2px 0;
+    }
+    textarea{
+      min-height: 96px;
+      resize: vertical;
+      font-weight: 650;
+      line-height: 1.5;
+    }
+    .hint{
+      margin-top: 8px;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+    button{
+      border: 0;
+      cursor:pointer;
+      font-family: var(--sans);
+      font-weight: 900;
+      font-size: 13px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      transition: transform .08s ease, filter .12s ease;
+    }
+    .btn-primary{
+      background: linear-gradient(135deg, rgba(255,122,166,.98), rgba(184,155,255,.92));
+      color:white;
+      box-shadow: 0 16px 36px rgba(255,79,139,.20);
+    }
+    .btn-ghost{
+      background: rgba(255,255,255,.70);
+      border: 1px solid rgba(0,0,0,.08);
+      color: var(--text);
+      box-shadow: 0 10px 24px rgba(30,10,25,.06);
+    }
+    button:hover{transform: translateY(-1px)}
+    button:active{transform: translateY(0px)}
+    .btn-primary:hover{filter:brightness(1.02)}
+    .btn-ghost:hover{filter:brightness(1.01)}
+
+    /* Output */
+    .output-wrap{
+      display:grid;
+      gap: 12px;
+    }
+    .callout{
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      border: 1px solid rgba(0,0,0,.08);
+      background:
+        radial-gradient(240px 120px at 20% 10%, rgba(255,179,138,.26), transparent 60%),
+        radial-gradient(220px 120px at 85% 30%, rgba(184,155,255,.22), transparent 60%),
+        rgba(255,255,255,.66);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+    }
+    .callout strong{
+      font-weight: 950;
+    }
+    .callout p{
+      margin: 0;
+      color: rgba(23,23,26,.75);
+      font-weight: 650;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .promptbox{
+      position:relative;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.78);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+    }
+    .promptbox .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(0,0,0,.07);
+      background:
+        linear-gradient(135deg, rgba(255,122,166,.12), rgba(184,155,255,.12));
+    }
+    .promptbox .topbar .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight: 950;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .chip{
+      font-weight: 900;
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(0,0,0,.08);
+      color: rgba(23,23,26,.86);
+      white-space:nowrap;
+    }
+    .promptbox pre{
+      margin:0;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: rgba(23,23,26,.92);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 520px;
+      overflow:auto;
+    }
+    .prompt-actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding: 12px;
+      border-top: 1px solid rgba(0,0,0,.07);
+      background: rgba(255,255,255,.60);
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(0,0,0,.08);
+      margin: 18px 0;
+    }
+
+    /* Footer sections */
+    .three{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .info{
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.62);
+      box-shadow: var(--shadow2);
+      padding: 14px;
+      backdrop-filter: blur(12px);
+    }
+    .info h3{
+      margin: 0 0 6px;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .info p{
+      margin:0;
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    /* CTA band */
+    .cta{
+      margin-top: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(0,0,0,.08);
+      background:
+        radial-gradient(420px 220px at 15% 30%, rgba(255,122,166,.22), transparent 60%),
+        radial-gradient(420px 220px at 80% 55%, rgba(184,155,255,.18), transparent 60%),
+        rgba(255,255,255,.68);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 16px;
+      backdrop-filter: blur(12px);
+    }
+    .cta .left h3{
+      margin:0 0 6px;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+    .cta .left p{
+      margin:0;
+      color: var(--muted);
+      font-weight: 650;
+      font-size: 13px;
+      line-height: 1.55;
+      max-width: 70ch;
+    }
+    .cta .right{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 20px;
+      background: rgba(23,23,26,.92);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.20);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 999;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero{grid-template-columns:1fr}
+      .main{grid-template-columns:1fr}
+      .three{grid-template-columns:1fr}
+      .hero h1{font-size: 34px}
+      .cta{flex-direction:column; align-items:flex-start}
+      .cta .right{justify-content:flex-start}
+    }
+    @media (max-width: 520px){
+      .grid2{grid-template-columns:1fr}
+      .hero h1{font-size: 30px}
+      .nav-actions .pill:not(.primary){display:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header class="nav" aria-label="Top navigation">
+      <a class="brand" href="#" aria-label="Glowly home">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="name">Glowly</div>
+          <span class="tag">Portable AI Skincare Brief</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a class="pill" href="#how-it-works"><strong>How it works</strong></a>
+        <a class="pill" href="#brief">Generate brief</a>
+        <a class="pill primary" href="#app">Open Glowly App</a>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="Hero">
+      <div class="card">
+        <h1>Your skincare, structured like a system — not a vibe.</h1>
+        <p>
+          This page generates a <strong>portable, AI-compatible Skincare Brief</strong> from your routine and goals.
+          It’s a preview artifact of Glowly’s approach — useful anywhere, but intentionally simplified.
+          <br/><br/>
+          <strong>Glowly the app</strong> goes deeper with photo-based analysis, progress tracking, and routine iteration over time.
+        </p>
+
+        <div class="badge-row" role="list" aria-label="Key benefits">
+          <div class="badge" role="listitem"><span class="dot"></span> Structured inputs</div>
+          <div class="badge" role="listitem"><span class="dot lav"></span> Normalized priorities</div>
+          <div class="badge" role="listitem"><span class="dot peach"></span> Clear constraints</div>
+          <div class="badge" role="listitem"><span class="dot mint"></span> AI-compatible export</div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="mini">
+          <h3>What this is</h3>
+          <p>A “receipt” of structured context that you can paste into any AI (ChatGPT, Claude, Gemini, etc.).</p>
+          <div class="list">
+            <div class="li"><span class="check" aria-hidden="true"></span><div><strong>Fast</strong> — 2 minutes of inputs</div></div>
+            <div class="li"><span class="check" aria-hidden="true"></span><div><strong>Portable</strong> — works in any AI</div></div>
+            <div class="li"><span class="check" aria-hidden="true"></span><div><strong>Transparent</strong> — you see the structure</div></div>
+          </div>
+        </div>
+
+        <div class="mini" id="how-it-works">
+          <h3>What this is NOT</h3>
+          <p>
+            Not photo analysis. Not progress tracking. Not routine memory. Not an ingredient interaction engine.
+            Those live inside Glowly.
+          </p>
+          <div class="hint" style="margin-top:10px">
+            If you want “set it once and iterate with history,” use the app.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="main" id="brief" aria-label="Brief builder">
+      <div class="card">
+        <div class="section-title">
+          <h2>Build your Skincare Brief</h2>
+          <p class="sub">Structured in Glowly style</p>
+        </div>
+
+        <form id="briefForm" autocomplete="on">
+          <div class="grid2">
+            <div class="field">
+              <label for="skinType">Skin type</label>
+              <select id="skinType" required>
+                <option value="">Select…</option>
+                <option>Oily</option>
+                <option>Dry</option>
+                <option>Combination</option>
+                <option>Normal</option>
+                <option>Sensitive</option>
+                <option>Acne-prone</option>
+                <option>Not sure</option>
+              </select>
+              <div class="hint">If unsure, choose “Not sure”. The brief will request clarifying checks.</div>
+            </div>
+
+            <div class="field">
+              <label for="climate">Climate / environment</label>
+              <select id="climate">
+                <option value="">Optional…</option>
+                <option>Humid</option>
+                <option>Dry</option>
+                <option>Cold</option>
+                <option>Hot</option>
+                <option>Mixed / seasonal</option>
+                <option>Indoor / AC most days</option>
+              </select>
+              <div class="hint">Affects barrier, dehydration, oiliness, and irritation risk.</div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="concerns">Primary concerns (comma-separated)</label>
+              <input id="concerns" placeholder="e.g., acne, redness, clogged pores, hyperpigmentation, dryness" />
+              <div class="hint">Use concrete terms. Avoid “bad skin” — specify what you see.</div>
+            </div>
+
+            <div class="field">
+              <label for="goals">Skin goals (comma-separated)</label>
+              <input id="goals" placeholder="e.g., fewer breakouts, smoother texture, brighter tone, calmer redness" />
+              <div class="hint">Goals help prioritize trade-offs (e.g., acne control vs barrier repair).</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="routine">Current routine (what you use + how often)</label>
+            <textarea id="routine" placeholder="AM: cleanser (daily), vitamin C (3x/week), moisturizer (daily), SPF (daily)
+PM: cleanser (daily), retinoid (2x/week), moisturizer (daily)
+Notes: I sometimes skip SPF on weekends…"></textarea>
+            <div class="hint">Write it like a checklist. Frequency matters more than brand hype.</div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="constraints">Constraints / preferences</label>
+              <input id="constraints" placeholder="e.g., fragrance-free, low budget, no strong acids, vegan, minimal routine" />
+              <div class="hint">This prevents “good in theory, unusable in life” outputs.</div>
+            </div>
+
+            <div class="field">
+              <label for="risk">Irritation history / sensitivities</label>
+              <input id="risk" placeholder="e.g., stings with niacinamide, reacts to fragrance, peeling from retinoids" />
+              <div class="hint">If you’ve had reactions, list them — it changes the plan.</div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="field">
+              <label for="timeBudget">Time/effort budget</label>
+              <select id="timeBudget">
+                <option value="">Optional…</option>
+                <option>Minimal (2–3 steps)</option>
+                <option>Moderate (4–6 steps)</option>
+                <option>Enthusiast (7+ steps)</option>
+              </select>
+              <div class="hint">Glowly prioritizes routines you’ll actually follow.</div>
+            </div>
+
+            <div class="field">
+              <label for="aiChoice">AI you’ll paste into</label>
+              <select id="aiChoice">
+                <option>Any AI</option>
+                <option>ChatGPT</option>
+                <option>Claude</option>
+                <option>Gemini</option>
+                <option>Perplexity</option>
+                <option>Other</option>
+              </select>
+              <div class="hint">The brief is model-agnostic; formatting stays stable.</div>
+            </div>
+          </div>
+
+          <div class="btnrow">
+            <button type="button" class="btn-primary" id="generateBtn">Generate Skincare Brief</button>
+            <button type="button" class="btn-ghost" id="fillExampleBtn">Fill with example</button>
+            <button type="reset" class="btn-ghost" id="resetBtn">Reset</button>
+          </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <div class="callout" role="note" aria-label="Boundary note">
+          <p>
+            <strong>Important boundary:</strong> This export is intentionally limited.
+            It cannot do photo-based analysis, detect changes over time, track adherence, or learn your skin’s reactions across weeks.
+            Those capabilities exist inside Glowly.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Your AI-Compatible Brief</h2>
+          <p class="sub">Portable “receipt” of structured context</p>
+        </div>
+
+        <div class="output-wrap">
+          <div class="promptbox" aria-label="Generated brief output">
+            <div class="topbar">
+              <div class="title">
+                <span class="chip">Glowly Export</span>
+                <span class="chip" id="exportStamp">Not generated yet</span>
+              </div>
+              <span class="chip" id="qualityChip">Structure: —</span>
+            </div>
+            <pre id="promptOutput">Fill the form and click “Generate Skincare Brief”.
+This will produce a structured, AI-compatible context block you can paste anywhere.</pre>
+            <div class="prompt-actions">
+              <button class="btn-primary" type="button" id="copyBtn">Copy</button>
+              <button class="btn-ghost" type="button" id="downloadBtn">Download .txt</button>
+              <button class="btn-ghost" type="button" id="openAiBtn">Open your AI</button>
+            </div>
+          </div>
+
+          <div class="callout" id="valueCallout">
+            <p>
+              <strong>Why this works:</strong> Most AI skincare answers fail because the inputs are vague.
+              Glowly forces a structured brief: concerns, goals, routine, frequency, constraints, and risk signals — then asks for clarifying tests.
+              That reduces nonsense and prevents “one-size-fits-all” recommendations.
+            </p>
+          </div>
+
+          <div class="callout" id="downgradeCallout">
+            <p>
+              <strong>Honest limitation:</strong> If you rely on copy-pasting briefs, you’ll re-do this whenever your routine changes —
+              and you won’t have history. Glowly the app handles memory, photo analysis, and progress tracking automatically.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="three" aria-label="What you get and what's missing">
+      <div class="info">
+        <h3>What you get here</h3>
+        <p>Portable structure, clear constraints, risk-aware questions, and a consistent format that works across AIs.</p>
+      </div>
+      <div class="info">
+        <h3>What the app adds</h3>
+        <p>Photo-based analysis, progress timelines, routine iteration, adherence tracking, and personalized summaries over time.</p>
+      </div>
+      <div class="info">
+        <h3>Neutrality</h3>
+        <p>No ads here. No affiliate pushes. The goal is trust and clarity — not “buy these 12 things”.</p>
+      </div>
+    </section>
+
+    <section class="cta" id="app" aria-label="App CTA">
+      <div class="left">
+        <h3>Glowly works when you stop retyping your life into prompts.</h3>
+        <p>
+          Use this brief as a preview. When you want photo-based analysis and progress tracking,
+          the app turns this into a living system with history — not a one-off chat.
+        </p>
+      </div>
+      <div class="right">
+        <!-- Replace these with real links later -->
+        <a class="pill primary" href="#" onclick="fakeInstall(event)">Get Glowly (iOS / Android)</a>
+        <a class="pill" href="#" onclick="fakeInstall(event)">See how Glowly works</a>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section aria-label="Legal / safety note" class="info" style="max-width: 1180px; margin: 0 auto;">
+      <h3>Safety note</h3>
+      <p>
+        This is not medical advice. If you have persistent irritation, severe acne, or skin conditions (eczema, rosacea, dermatitis),
+        consult a dermatologist. Patch test new products and introduce actives gradually.
+      </p>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+  <script>
+    // ------- Helpers -------
+    const $ = (id) => document.getElementById(id);
+
+    function nowStamp(){
+      const d = new Date();
+      const pad = (n)=> String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function cleanList(s){
+      return (s || "")
+        .split(",")
+        .map(x => x.trim())
+        .filter(Boolean)
+        .slice(0, 20);
+    }
+
+    function computePriority(concerns, goals, risk){
+      // Lightweight heuristic: produce a consistent “computed” feel without pretending medical certainty.
+      const weights = {};
+      const bump = (k, v)=> weights[k] = (weights[k]||0) + v;
+
+      concerns.forEach(c=>{
+        const k = c.toLowerCase();
+        bump(k, 2);
+        if (/(acne|breakout|clog|blackhead|whitehead)/.test(k)) bump("acne_control", 3);
+        if (/(red|redness|rosacea|irritat|sting|burn)/.test(k)) bump("calm_inflammation", 3);
+        if (/(dry|dehydrat|flak|tight)/.test(k)) bump("barrier_repair", 3);
+        if (/(pigment|dark spot|melasma|uneven|hyperpig)/.test(k)) bump("tone_evening", 3);
+        if (/(texture|bumpy|rough|pores)/.test(k)) bump("texture_smoothing", 2);
+        if (/(wrinkle|fine line|aging)/.test(k)) bump("anti_aging", 2);
+      });
+
+      goals.forEach(g=>{
+        const k = g.toLowerCase();
+        bump(k, 1);
+        if (/(calm|soothe|less red)/.test(k)) bump("calm_inflammation", 2);
+        if (/(smooth|texture)/.test(k)) bump("texture_smoothing", 2);
+        if (/(bright|glow|even tone)/.test(k)) bump("tone_evening", 2);
+        if (/(fewer breakouts|clearer)/.test(k)) bump("acne_control", 2);
+      });
+
+      const r = (risk||"").toLowerCase();
+      if (/(sensitive|react|sting|burn)/.test(r)) bump("irritation_risk", 6);
+      if (/(peel|dry|barrier)/.test(r)) bump("barrier_repair", 2);
+
+      // Convert to sorted list of top “signals”
+      const entries = Object.entries(weights)
+        .filter(([k,v]) => v >= 3 && k.length <= 24)
+        .sort((a,b)=> b[1]-a[1])
+        .slice(0, 6)
+        .map(([k,v]) => ({ key: k, score: v }));
+
+      // Always include guardrails if irritation risk is high
+      const irritationRisk = (weights["irritation_risk"]||0);
+      return { entries, irritationRisk };
+    }
+
+    function buildBrief(data){
+      const concerns = cleanList(data.concerns);
+      const goals = cleanList(data.goals);
+
+      const priority = computePriority(concerns, goals, data.risk);
+
+      const hasRoutine = (data.routine || "").trim().length > 0;
+      const hasConcerns = concerns.length > 0;
+      const hasGoals = goals.length > 0;
+      const structureScore = [hasRoutine, hasConcerns, hasGoals, !!data.skinType].filter(Boolean).length;
+
+      const quality =
+        structureScore >= 4 ? "High" :
+        structureScore === 3 ? "Medium" :
+        "Low";
+
+      const clarifying = [];
+      if (data.skinType === "Not sure" || !data.skinType) {
+        clarifying.push("Confirm skin type with 2–3 quick checks (oiliness by midday, post-wash tightness, irritation tendency).");
+      }
+      if (!hasRoutine) clarifying.push("Ask for current routine with frequency per product (AM/PM + days/week).");
+      if (!hasConcerns) clarifying.push("Ask for primary concerns (what is visible: acne, redness, dryness, pigmentation, texture).");
+      if (!hasGoals) clarifying.push("Ask for goals and timeline expectations (2–4 weeks vs 8–12 weeks).");
+      if (!(data.risk||"").trim()) clarifying.push("Ask about irritation history and sensitivities (fragrance, niacinamide, retinoids, acids).");
+      if (!data.constraints.trim()) clarifying.push("Ask for constraints (budget, fragrance-free, minimal steps, pregnancy/breastfeeding if relevant).");
+
+      const riskLevel =
+        priority.irritationRisk >= 6 ? "High" :
+        priority.irritationRisk >= 3 ? "Moderate" :
+        "Low/Unknown";
+
+      const prioLines = priority.entries.length
+        ? priority.entries.map(p => `- ${p.key.replace(/_/g," ")}: ${p.score}`).join("\n")
+        : "- (insufficient signals — gather concerns/goals first)";
+
+      const brief =
+`You are a careful skincare assistant. You MUST avoid medical claims. You MUST prioritize safety and feasibility.
+Your job: produce a simple, realistic routine plan and adjustment strategy, based strictly on the context below.
+
+[CONTEXT — GLOWLY-STYLE SKINCARE BRIEF v1]
+Generated: ${nowStamp()}
+Target AI: ${data.aiChoice}
+
+PERSON PROFILE
+- Skin type (self-reported): ${data.skinType || "Unknown"}
+- Climate / environment: ${data.climate || "Unknown"}
+- Time/effort budget: ${data.timeBudget || "Unknown"}
+
+CONCERNS (user-stated)
+${hasConcerns ? concerns.map(c=>`- ${c}`).join("\n") : "- (not provided)"}
+
+GOALS (user-stated)
+${hasGoals ? goals.map(g=>`- ${g}`).join("\n") : "- (not provided)"}
+
+CURRENT ROUTINE (with frequency)
+${hasRoutine ? data.routine.trim() : "(not provided)"}
+
+CONSTRAINTS / PREFERENCES
+${data.constraints.trim() ? data.constraints.trim() : "(not provided)"}
+
+IRRITATION HISTORY / SENSITIVITIES
+${data.risk.trim() ? data.risk.trim() : "(not provided)"}
+
+NORMALIZED PRIORITY SIGNALS (heuristic; confirm with user)
+- Irritation risk: ${riskLevel}
+${prioLines}
+
+TASK
+1) First: ask ONLY the minimum clarifying questions needed (max 6), based on missing info above.
+2) Then: propose a routine plan with AM/PM steps + frequency per active, optimized for:
+   - safety (especially if irritation risk is high),
+   - consistency (match time/effort budget),
+   - resolving top concerns without overloading actives.
+3) Include “Do/Don’t” guardrails: patch testing, introduction schedule, and what to stop if irritation occurs.
+4) If recommending actives (retinoid/acids/vit C/benzoyl peroxide), start low frequency and justify trade-offs.
+5) Output MUST be structured with headings and bullet points. Keep it pragmatic.
+
+LIMITATIONS (must acknowledge)
+- No photo analysis is provided here.
+- No progress history exists.
+- This brief may be incomplete or biased by self-reporting.
+
+[END CONTEXT]
+`;
+
+      return { brief, quality };
+    }
+
+    function showToast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(()=> t.classList.remove("show"), 1200);
+    }
+
+    // ------- Events -------
+    $("generateBtn").addEventListener("click", () => {
+      const data = {
+        skinType: $("skinType").value,
+        climate: $("climate").value,
+        concerns: $("concerns").value,
+        goals: $("goals").value,
+        routine: $("routine").value,
+        constraints: $("constraints").value || "",
+        risk: $("risk").value || "",
+        timeBudget: $("timeBudget").value,
+        aiChoice: $("aiChoice").value
+      };
+
+      const { brief, quality } = buildBrief(data);
+      $("promptOutput").textContent = brief;
+      $("exportStamp").textContent = `Generated ${nowStamp()}`;
+      $("qualityChip").textContent = `Structure: ${quality}`;
+      showToast("Brief generated");
+    });
+
+    $("copyBtn").addEventListener("click", async () => {
+      const text = $("promptOutput").textContent || "";
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("Copied");
+      }catch{
+        // Fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Copied");
+      }
+    });
+
+    $("downloadBtn").addEventListener("click", () => {
+      const text = $("promptOutput").textContent || "";
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "glowly-skincare-brief.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Downloaded");
+    });
+
+    $("openAiBtn").addEventListener("click", () => {
+      // You can swap these with your preferred destinations.
+      // Keeping it neutral to avoid implying endorsement.
+      const choice = ($("aiChoice").value || "Any AI").toLowerCase();
+      let url = "https://chat.openai.com/";
+      if (choice.includes("claude")) url = "https://claude.ai/";
+      if (choice.includes("gemini")) url = "https://gemini.google.com/";
+      if (choice.includes("perplexity")) url = "https://www.perplexity.ai/";
+      window.open(url, "_blank", "noopener,noreferrer");
+    });
+
+    $("fillExampleBtn").addEventListener("click", () => {
+      $("skinType").value = "Combination";
+      $("climate").value = "Mixed / seasonal";
+      $("concerns").value = "clogged pores, occasional breakouts, redness around nose, uneven texture";
+      $("goals").value = "fewer breakouts, calmer redness, smoother texture, consistent glow";
+      $("routine").value =
+`AM: gentle cleanser (daily), moisturizer (daily), SPF 50 (daily)
+PM: cleanser (daily), retinoid (2x/week), moisturizer (daily)
+Sometimes: AHA exfoliant (1x/week)`;
+      $("constraints").value = "fragrance-free, moderate budget, keep routine under 5 steps";
+      $("risk").value = "retinoid causes dryness if used more than 2x/week; stings with some toners";
+      $("timeBudget").value = "Moderate (4–6 steps)";
+      $("aiChoice").value = "Any AI";
+      showToast("Example filled");
+    });
+
+    function fakeInstall(e){
+      e.preventDefault();
+      showToast("Replace this with your real app links");
+    }
+    window.fakeInstall = fakeInstall;
+  </script>
+</body>
+</html>
